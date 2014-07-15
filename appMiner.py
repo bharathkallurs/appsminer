@@ -26,19 +26,34 @@ class mineApps:
 			return (-1, "Not able to fetch page details")
 
 	#fetch all the app id urls from the above url
-	def fetch_app_url(self, soup):
-		print "m coming inside fetch_app_url"
+	def fetch_app_url(self, soup, show_more=False):
 		try :
+			#see more urls
+			moreHref = '/store/recommended\?'
+			seeMoreArray = []
+
+			#fetch app urls listed on each page
 			linkArray = []
 			hrefVal = '/store/apps/details\?id='
+
 			soup.prettify()
-			
+
+			#fetcg tge links of all apps on the page
 			for link in soup.find_all('a', href=re.compile(hrefVal)): #a tag, class name
 				if link.get('href') not in linkArray :
 					linkArray.append(link.get('href'))
 			
+			#fetch links of the show more fields and return them
+			if show_more :
+				print "coming inside if" 			
+				for seeMore in soup.find_all('a', class_="see-more play-button small apps"):
+					if seeMore.get('href') not in seeMoreArray :
+						seeMoreArray.append(seeMore.get('href'))
+			else :
+				seeMoreArray = None
+
 			#print linkArray
-			return(0, linkArray)
+			return(0, linkArray, seeMoreArray)
 		except Exception as e :
 			print sys.exc_info()[0], e
 			return(-1, "Not able to fetch app URL")
@@ -66,7 +81,6 @@ class mineApps:
 			#app_id package name
 			hrefVal = re.compile('/store/apps/details\?id=')
 			app_id = hrefVal.sub('', app_url)
-			print app_id
 
 			#developer id
 			hrefDev = '/store/apps/developer\?id='
@@ -96,13 +110,27 @@ class mineApps:
 
 			#app description
 			description = detailer.find("div",class_="description").text
+			#check this again
+			#description = unicode(detailer.find("div", class_="id-app-orig-desc").text)
 
+			#print description
 			#app icon url
 			image = detailer.find(itemprop="image")
 			app_icon_url = image["src"]
 
 			#number of downloads
 			app_downloads = (detailer.find("div",class_="stars-count").text).strip()
+
+			#app version
+			app_version = (detailer.find(itemprop="softwareVersion", class_="content").text).strip()
+
+			#number of installations 
+			app_num_installs = (detailer.find(itemprop="numDownloads", class_="content").text).strip()			
+
+			#developer email
+			mailHref = "mailto:"
+			link_email = detailer.find('a', href=re.compile(mailHref), class_="dev-link")
+			dev_email = (link_email.get('href')).replace('mailto:', '')
 
 			#return everything packed in a json object
 			#this is not a json, i wanted this to be, but again lets see
@@ -116,6 +144,9 @@ class mineApps:
 					"app_icon_url": app_icon_url,
 					"app_downloads": app_downloads,
 					"description" : description,
+					"app_version" : app_version,
+					"app_num_installs": app_num_installs,
+					"dev_email" : dev_email
 				}
 
 			#if None not in (app_id, app_name, app_rating, category, description, app_downloads, app_icon_url, developer_id) :

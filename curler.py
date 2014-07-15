@@ -18,7 +18,7 @@ def extract_app_details():
 	status , pagerObj = pager.fetch_page_details()
 
 	#fetch all the URLs listing app details present in the parent page
-	status , app_urls = pager.fetch_app_url(pagerObj)
+	status , app_urls , see_more_urls = pager.fetch_app_url(pagerObj, True)
 
 	#fetch the urls of apps from a search.
 	#this will list the app searched for and also fetch data from all related apps
@@ -26,6 +26,9 @@ def extract_app_details():
 	#searchString = ["zombies", "vs", "plants"]
 	#status, app_urls = pager.fetch_related_app_details(searchString)
 
+	#url = "https://play.google.com/store/apps/details?id=com.king.candycrushsaga"
+	#status , details = pager.fetch_app_details(url)
+	'''
 	#fetch the details of each object
 	for url in app_urls : 
 		status , details = pager.fetch_app_details(url)
@@ -35,7 +38,7 @@ def extract_app_details():
 			print details
 		else :
 			print "NOT ABLE TO FETCH THE REQUIRED DETAIL"
-
+	'''
 
 
 if __name__ == '__main__':
