@@ -7,8 +7,7 @@ class mineApps:
 	def __init__(self, pagePath):
 
 		self.page = pagePath
-		print self.page
-
+		
 	#read the page provided during object creation
 	@staticmethod
 	def set_buffer(pageURL):
@@ -73,8 +72,6 @@ class mineApps:
 			else :
 				app_url = uri
 
-			print app_url
-
 			detailer = mineApps.set_buffer(app_url)
 			detailer.prettify()
 
@@ -110,10 +107,7 @@ class mineApps:
 
 			#app description
 			description = detailer.find("div",class_="description").text
-			#check this again
-			#description = unicode(detailer.find("div", class_="id-app-orig-desc").text)
-
-			#print description
+		
 			#app icon url
 			image = detailer.find(itemprop="image")
 			app_icon_url = image["src"]
@@ -132,8 +126,7 @@ class mineApps:
 			link_email = detailer.find('a', href=re.compile(mailHref), class_="dev-link")
 			dev_email = (link_email.get('href')).replace('mailto:', '')
 
-			#return everything packed in a json object
-			#this is not a json, i wanted this to be, but again lets see
+			#return all the details fetched
 			jsonString = {
 					"app_name" : app_name,
 					"app_id" : app_id,
@@ -162,9 +155,6 @@ class mineApps:
 		try :
 			uri = "https://play.google.com/store/search?q="
 			searchUrl = uri + '%20'.join(searchStr)
-			
-			print searchUrl
-
 			searcher = mineApps(searchUrl)
 			status, searcherObj = searcher.fetch_page_details()
 			status, searchArray = searcher.fetch_app_url(searcherObj)
